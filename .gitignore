@@ -1,4 +1,10 @@
-node_modules/
+# Compiled/Binary files
+__pycache__/
+*.pyc
+
+# Editor/IDE files
+.vscode/
+.idea/node_modules/
 .next/
 dist/
 build/
