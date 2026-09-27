@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAPA — Corrective &amp; Preventive Action</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body>
+<div id="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">C</div>
+      <div>
+        <div class="brand-name">CAPA</div>
+        <div class="brand-sub" id="brand-company">Quality System</div>
+      </div>
+    </div>
+    <nav id="nav">
+      <button class="nav-btn active" data-view="dashboard"><span class="ni">📊</span> Dashboard</button>
+      <button class="nav-btn" data-view="register"><span class="ni">📋</span> CAPA Register</button>
+      <button class="nav-btn" data-view="tasks"><span class="ni">✅</span> My Tasks <span class="badge" id="task-badge" hidden></span></button>
+      <button class="nav-btn" data-view="settings"><span class="ni">⚙️</span> Settings</button>
+    </nav>
+    <div class="side-foot">
+      <button class="btn btn-accent w100" id="btn-new-capa">＋ New CAPA</button>
+      <div class="kbd-hint">Ctrl+N new · Ctrl+F search</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <h1 id="page-title">Dashboard</h1>
+      <div class="topbar-actions" id="topbar-actions"></div>
+    </header>
+    <section id="view" class="view"></section>
+  </main>
+</div>
+
+<!-- New CAPA modal -->
+<div class="modal-backdrop" id="modal-backdrop" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-head">
+      <h2 id="modal-title">New CAPA record</h2>
+      <button class="icon-btn" id="modal-close" aria-label="Close">✕</button>
+    </div>
+    <form id="new-capa-form" class="modal-body">
+      <div class="grid2">
+        <label class="fld span2">Title *
+          <input name="title" required maxlength="160" placeholder="Short description of the issue">
+        </label>
+        <label class="fld">Source *
+          <select name="source" id="f-source" required></select>
+        </label>
+        <label class="fld">Priority
+          <select name="priority" id="f-priority"></select>
+        </label>
+        <label class="fld">Product / Area
+          <input name="product" placeholder="e.g. Metformin 500 mg Tablets">
+        </label>
+        <label class="fld">Site
+          <input name="site" id="f-site" placeholder="Plant">
+        </label>
+        <label class="fld">Originator
+          <input name="originator" placeholder="Raised by">
+        </label>
+        <label class="fld">CAPA owner
+          <input name="owner" placeholder="Responsible person">
+        </label>
+        <label class="fld">Opened on
+          <input type="date" name="opened_on" id="f-opened">
+        </label>
+        <label class="fld">Target date *
+          <input type="date" name="target_date" required>
+        </label>
+        <label class="fld span2">Problem statement
+          <textarea name="problem_statement" rows="3" placeholder="What happened? Where? When detected?"></textarea>
+        </label>
+      </div>
+      <div class="modal-error" id="modal-error" hidden></div>
+      <div class="modal-foot">
+        <button type="button" class="btn" id="modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-accent">Create CAPA</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toasts" class="toasts"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>

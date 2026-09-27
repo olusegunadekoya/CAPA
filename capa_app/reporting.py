@@ -1,21 +1,18 @@
-"""Reporting helpers: export a single CAPA record or the full register."""
+"""Reporting helpers: export a single CAPA record or the full register.
+
+The core builders (``capa_to_text`` / ``register_csv_text``) are GUI-free so
+the web server can reuse them; the ``export_*`` wrappers add the Tkinter
+save-file dialogs used by the desktop app.
+"""
 from __future__ import annotations
 
 import csv
+import io
 import os
 from datetime import datetime
 
 from . import database as db
 from .database import data_dir
-
-
-def _ask_path(title: str, default_name: str, filetypes) -> str | None:
-    from tkinter import filedialog
-    path = filedialog.asksaveasfilename(title=title, initialfile=default_name,
-                                        defaultextension=filetypes[0][1],
-                                        filetypes=filetypes, initialdir=data_dir())
-    return path or None
-
 
 SECTIONS = [
     ("Problem statement", "problem_statement"),
@@ -97,6 +94,21 @@ def capa_to_text(capa_id: int) -> str:
     return "\n".join(lines)
 
 
+def register_csv_text() -> str:
+    """Build the full-register CSV as a string (GUI-free, shared with web)."""
+    rows = db.list_capas(order_by="capa_number ASC")
+    fields = ["capa_number", "title", "source", "product", "site", "originator",
+              "owner", "priority", "status", "opened_on", "target_date", "closed_on"]
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(fields + ["effective_status", "days_remaining"])
+    for r in rows:
+        days = db.days_remaining(r)
+        w.writerow([r[k] for k in fields] + [db.effective_status(r),
+                                             "" if days is None else days])
+    return buf.getvalue()
+
+
 def export_capa_txt(capa_id: int, parent=None) -> str | None:
     from tkinter import filedialog
     row = db.get_capa(capa_id)
@@ -124,14 +136,6 @@ def export_register_csv(parent=None) -> str | None:
         filetypes=[("CSV file", "*.csv"), ("All files", "*.*")])
     if not path:
         return None
-    rows = db.list_capas(order_by="capa_number ASC")
-    fields = ["capa_number", "title", "source", "product", "site", "originator",
-              "owner", "priority", "status", "opened_on", "target_date", "closed_on"]
     with open(path, "w", newline="", encoding="utf-8-sig") as f:
-        w = csv.writer(f)
-        w.writerow(fields + ["effective_status", "days_remaining"])
-        for r in rows:
-            days = db.days_remaining(r)
-            w.writerow([r[k] for k in fields] + [db.effective_status(r),
-                                                 "" if days is None else days])
+        f.write(register_csv_text())
     return path
